@@ -6,6 +6,8 @@
 Google Authenticator Migration for Google Chrome Extension.
 Backup Authenticator data before it too late.
 
+![Screenshot](screenshot.png)
+
 ## How Import Data From Google Authenticator
 
 - Open Google Authenticator App

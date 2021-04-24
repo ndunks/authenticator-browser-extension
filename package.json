@@ -1,0 +1,9 @@
+{
+  "name": "authenticator-browser-extension",
+  "version": "0.1.0",
+  "description": "Backup Google Authenticator to your browser",
+  "main": "index.js",
+  "author": "Mochamad Arifin",
+  "license": "MIT",
+  "dependencies": {}
+}

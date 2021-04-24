@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css">
+        .item:not(:last-child) {
+            border-bottom: none;
+        }
+
+        .item {
+            background-color: white;
+            padding: 10px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            vertical-align: middle;
+            align-items: center;
+            border: solid 1px #767676;
+            cursor: pointer;
+        }
+
+        .issuer {
+            color: #424242;
+        }
+
+        .code {
+            font-size: 24px;
+            padding: 0px;
+            font-family: monospace;
+            user-select: text;
+            text-align: right;
+            display: block;
+            width: 103px;
+            overflow: hidden;
+            border: none;
+            resize: none;
+            height: 35px;
+            line-height: 39px;
+        }
+
+        body {
+            margin: 0px;
+            background-color: #f3f3f3;
+            font-family: sans-serif;
+        }
+
+        div#items {
+            margin-top: 10px;
+        }
+
+        div#wrapper {
+            min-width: 350px;
+        }
+
+        .tab {
+            padding: 15px;
+        }
+
+        #data {
+            width: 100%;
+        }
+
+        #btnSetting {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="main" class="tab">
+            <button id="btnSetting">Open Setting</button>
+            <input placeholder="Password" id="password" value="" />
+            <div id="items">
+            </div>
+        </div>
+        <div id="setting" class="tab">
+            <h2>Auth Data</h2>
+            <textarea id="data" rows="10"></textarea>
+            <input placeholder="Set Password" id="setPassword" value="" />
+            <button id="btnSave">Save</button>
+        </div>
+    </div>
+    <script src="crypto-aes-gcm.js"></script>
+    <script src="jsOTP.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>

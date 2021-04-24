@@ -1,0 +1,13 @@
+{
+    "name": "Authenticator Browser Extension",
+    "description": "Backup Google Authenticator to your browser",
+    "version": "0.1",
+    "manifest_version": 3,
+    "permissions": [
+        "storage",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "index.html"
+    }
+}

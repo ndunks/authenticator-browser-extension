@@ -10,7 +10,7 @@
  *   const ciphertext = await aesGcmEncrypt('my secret text', 'pw');
  *   aesGcmEncrypt('my secret text', 'pw').then(function(ciphertext) { console.log(ciphertext); });
  */
-async function aesGcmEncrypt(plaintext, password) {
+export async function aesGcmEncrypt(plaintext, password) {
     const pwUtf8 = new TextEncoder().encode(password);                                 // encode password as UTF-8
     const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);                      // hash the password
 
@@ -45,7 +45,7 @@ async function aesGcmEncrypt(plaintext, password) {
  *   const plaintext = await aesGcmDecrypt(ciphertext, 'pw');
  *   aesGcmDecrypt(ciphertext, 'pw').then(function(plaintext) { console.log(plaintext); });
  */
-async function aesGcmDecrypt(ciphertext, password) {
+export async function aesGcmDecrypt(ciphertext, password) {
     const pwUtf8 = new TextEncoder().encode(password);                                  // encode password as UTF-8
     const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);                       // hash the password
 
@@ -56,11 +56,14 @@ async function aesGcmDecrypt(ciphertext, password) {
     const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['decrypt']);  // use pw to generate key
 
     const ctStr = atob(ciphertext.slice(24));                                           // decode base64 ciphertext
-    const ctUint8 = new Uint8Array(ctStr.match(/[\s\S]/g).map(ch => ch.charCodeAt(0))); // ciphertext as Uint8Array
-    // note: why doesn't ctUint8 = new TextEncoder().encode(ctStr) work?
+    if( ctStr !== null ){
+        const ctUint8 = new Uint8Array(ctStr.match(/[\s\S]/g).map(ch => ch.charCodeAt(0))); // ciphertext as Uint8Array
+        // note: why doesn't ctUint8 = new TextEncoder().encode(ctStr) work?
+    
+        const plainBuffer = await crypto.subtle.decrypt(alg, key, ctUint8);                 // decrypt ciphertext using key
+        const plaintext = new TextDecoder().decode(plainBuffer);                            // decode password from UTF-8
+        return plaintext;                                                                   // return the plaintext
 
-    const plainBuffer = await crypto.subtle.decrypt(alg, key, ctUint8);                 // decrypt ciphertext using key
-    const plaintext = new TextDecoder().decode(plainBuffer);                            // decode password from UTF-8
-
-    return plaintext;                                                                   // return the plaintext
+    }
+    return ''
 }

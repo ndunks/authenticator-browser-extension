@@ -1,11 +1,28 @@
+import { aesGcmDecrypt, aesGcmEncrypt } from "./libs/crypto-aes-gcm"
+import { Hotp, Totp } from "./libs/js-otp"
+
+declare var key: CryptoKey
+declare var wrapper: HTMLDivElement
+declare var main: HTMLDivElement
+declare var setting: HTMLDivElement
+declare var password: HTMLInputElement
+declare var setPassword: HTMLInputElement
+declare var data: HTMLTextAreaElement
+declare var btnSetting: HTMLButtonElement
+declare var btnSave: HTMLButtonElement
+declare var items: HTMLDivElement
+
+interface Storage {
+    /** Encrypted auth data */
+    data: string
+}
 
 function showTab(name) {
-    /** @type {HTMLDivElement} */
-    let tab;
-    for (tab of document.getElementsByClassName('tab')) {
+    for (const tab of Array.from(document.getElementsByClassName('tab') as HTMLCollectionOf<HTMLDivElement>)) {
         tab.style.display = tab.id == name ? 'block' : 'none';
     }
 }
+
 const itemTemplate = `<div class="item">
 <div class="issuer">ISSUER</div>
 <textarea class="code" rows="1">CODE</textarea>
@@ -18,9 +35,7 @@ function addItem(issuer, account, code) {
 }
 
 function clickCopyCode() {
-    /** @type {HTMLDivElement} */
-    let el;
-    for (el of document.querySelectorAll('.item')) {
+    document.querySelectorAll('.item').forEach(el => {
         el.addEventListener('click', function (event) {
             // Select the email link anchor text
             /** @type {HTMLTextAreaElement} */
@@ -36,7 +51,7 @@ function clickCopyCode() {
             }
             //window.getSelection().removeAllRanges();
         });
-    }
+    })
 }
 /**
  * @param {Uint8Array} raw 
@@ -44,10 +59,10 @@ function clickCopyCode() {
 function decodeOTPMigration(raw) {
     const items = [];
     let offset = 0;
-    const hotp = new jsOTP.hotp();
+    const hotp = new Hotp();
     const totp = {
-        6: new jsOTP.totp(30, 6),
-        8: new jsOTP.totp(30, 8),
+        6: new Totp(30, 6),
+        8: new Totp(30, 8),
     }
 
     while (offset < raw.length) {
@@ -118,7 +133,7 @@ function decryptData() {
 document.addEventListener('DOMContentLoaded', () => {
 
     password.addEventListener('keydown', ev => {
-        if (ev.key == 13) decryptData();
+        if (ev.key == '13') decryptData();
     })
 
     btnSave.addEventListener('click', () => {

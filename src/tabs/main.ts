@@ -1,0 +1,100 @@
+import { base32_encode } from "../libs/base32";
+import { Hotp, Totp } from "../libs/js-otp";
+
+declare var items: HTMLDivElement
+
+const itemTemplate = `<div class="item">
+<div class="issuer">ISSUER</div>
+<textarea class="code" rows="1">CODE</textarea>
+</div>`;
+
+function addItem(issuer, account, code) {
+    if (!issuer || issuer.length < 2)
+        issuer = account;
+    items.innerHTML += itemTemplate.replace('ISSUER', issuer).replace('CODE', code);
+}
+
+function clickCopyCode() {
+    document.querySelectorAll('.item').forEach(el => {
+        el.addEventListener('click', function (event) {
+            // Select the email link anchor text
+            /** @type {HTMLTextAreaElement} */
+            var codeEl = this.querySelector('.code');
+            codeEl.focus();
+            codeEl.select();
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'successful' : 'unsuccessful';
+                console.log('Copy email command was ' + msg, codeEl.innerText);
+            } catch (err) {
+                console.log('Oops, unable to copy');
+            }
+            //window.getSelection().removeAllRanges();
+        });
+    })
+}
+/**
+ * @param {Uint8Array} raw 
+ */
+function decodeOTPMigration(raw) {
+    
+    let offset = 0;
+    const hotp = new Hotp();
+    const totp = {
+        6: new Totp(30, 6),
+        8: new Totp(30, 8),
+    }
+
+    while (offset < raw.length) {
+        if (raw[offset] !== 10) {
+            if (offset < raw.length - 2)
+                console.warn('Invalid structure at', offset, 'of', raw.length)
+            break;
+        }
+        const itemLength = raw[offset + 1];
+        const secretStart = offset + 4;
+        const secretEnd = secretStart + raw[offset + 3];
+        const secret = base32_encode(raw.slice(secretStart, secretEnd));
+
+        const accountStart = secretEnd + 2;
+        const accountEnd = accountStart + raw[secretEnd + 1];
+        const account = new TextDecoder().decode(
+            raw.slice(accountStart, accountEnd)
+        ).toString();
+
+        const issuerStart = accountEnd + 2;
+        const issuerEnd = issuerStart + raw[accountEnd + 1];
+        const issuer = new TextDecoder().decode(
+            raw.slice(issuerStart, issuerEnd)
+        ).toString();
+
+        const algorithm = ["SHA1", "SHA1", "SHA256", "SHA512", "MD5"][
+            raw[issuerEnd + 1]
+        ];
+        const digits = [6, 6, 8][raw[issuerEnd + 3]] || 6;
+        const type = ["totp", "hotp", "totp"][
+            raw[issuerEnd + 5]
+        ];
+        let code;
+        let counter = null;
+        if (type === "hotp") {
+            counter = 1;
+            if (issuerEnd + 7 <= itemLength) {
+                counter = raw[issuerEnd + 7];
+            }
+            code = hotp.getOtp(secret, counter);
+        } else {
+            if (totp[digits])
+                code = totp[digits].getOtp(secret);
+            else console.warn('Unsupported digits', digits);
+        }
+        console.log(issuer, account, code);
+        addItem(issuer, account, code);
+        offset += itemLength + 2;
+    };
+    clickCopyCode();
+}
+
+export function showItems(data: Uint8Array) {
+    decodeOTPMigration(data)
+}

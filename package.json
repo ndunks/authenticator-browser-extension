@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build"
   },
   "name": "authenticator-browser-extension",
   "version": "0.1.0",

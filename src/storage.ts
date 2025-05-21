@@ -9,9 +9,16 @@ export class AppStorage {
         return !!localStorage.data
     }
 
-    async addItem(raw: OtpData, password?: string) {
-        const accounts = await this.getData(password)
-        accounts.push(raw)
+    async addItem(item: OtpData, password?: string) {
+        return this.addItems([item], password)
+    }
+
+    async addItems(items: OtpData[], password?: string) {
+        let accounts: OtpData[] = []
+        if (this.hasData()) {
+            accounts = await this.getData(password)
+        }
+        accounts.push(...items)
         return this.setData(accounts, password)
     }
 

@@ -1,3 +1,5 @@
+import type { DialogManager } from "./dialog-manager"
+
 export enum OtpAlgoritm {
     UNKNOWN,
     SHA1,
@@ -25,4 +27,14 @@ export interface OtpData {
     type: OtpType
     /** Optional for HOTP */
     counter?: number
+}
+
+
+export interface Dialog {
+    title: string
+    content: string | HTMLElement
+    onShow?(manager: DialogManager, param?: any): void
+}
+export interface DialogConstructor {
+    new(): Dialog
 }

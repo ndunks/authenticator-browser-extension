@@ -1,6 +1,5 @@
-import { OtpData, OtpType } from "../interfaces";
-import { base32_encode } from "../libs/base32";
-import { Hotp, Totp } from "../libs/js-otp";
+import { OtpData, OtpType } from "./interfaces";
+import { Hotp, Totp } from "./libs/js-otp";
 
 declare var items: HTMLDivElement
 
@@ -50,7 +49,6 @@ export function showItems(accounts: OtpData[]) {
                 code = totp[account.digits].getOtp(account.secret);
             else console.warn('Unsupported digits', account.digits);
         }
-        // console.log(issuer, account, code);
         addItem(account.issuer, account.name, code);
     }
     clickCopyCode()

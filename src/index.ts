@@ -1,9 +1,7 @@
-import { decodeGoogleAuthenticatorProto } from "./parser"
+import { DialogManager } from "./dialog-manager"
 import { AppStorage } from "./storage"
-import { showItems } from "./tabs/main"
-import mainHtml from "./tabs/main.html?raw"
-import settingHtml from "./tabs/settings.html?raw"
-import { strToBytes } from "./utils"
+import { showItems } from "./main"
+
 
 // Match with element ID in HTML
 declare var wrapper: HTMLDivElement
@@ -16,14 +14,21 @@ declare var btnSave: HTMLButtonElement
 declare var password: HTMLInputElement
 
 // Append tabs
-wrapper.innerHTML = mainHtml + settingHtml
+// wrapper.innerHTML = mainHtml
 
-const appStorage = new AppStorage()
+declare global {
+    var appStorage: AppStorage
+}
 
-function showTab(name) {
-    for (const tab of Array.from(document.getElementsByClassName('tab') as HTMLCollectionOf<HTMLDivElement>)) {
-        tab.style.display = tab.id == name ? 'block' : 'none';
+var appStorage = window['appStorage'] = new AppStorage()
+let dialogManager: DialogManager
+
+
+function showDialog(name: string) {
+    if (!dialogManager) {
+        dialogManager = new DialogManager()
     }
+    dialogManager.show(name)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,27 +37,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ev.key == '13') showItems(await appStorage.getData());
     })
 
-    btnSave.addEventListener('click', async () => {
-        const accounts = decodeGoogleAuthenticatorProto(strToBytes(data.value))
-        await Promise.all(accounts.map(acc => appStorage.addItem(acc, setPassword.value)))
-        showTab('main')
-    })
+    // btnSave.addEventListener('click', async () => {
+    //     const accounts = decodeGoogleAuthenticatorProto(strToBytes(data.value))
+    //     await Promise.all(accounts.map(acc => appStorage.addItem(acc, setPassword.value)))
+    //     showTab('main')
+    // })
 
     btnSetting.addEventListener('click', () => {
-        showTab('setting')
+        showDialog('import')
     })
-    if (appStorage.hasData()) {
-        showTab('main');
 
-        //Password may be empty, try to decrypt and display
-        try {
-            appStorage.getData().then(raw => {
-                showItems(raw)
-            })
-        } catch (error) { }
-    } else {
-        showTab('setting');
-    }
+    //Password may be empty, try to decrypt and display
+    try {
+        appStorage.getData().then(raw => {
+            showItems(raw)
+        })
+    } catch (error) { }
+
 
 })
 

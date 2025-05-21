@@ -58,7 +58,7 @@ div#wrapper {
 #btnSetting {
     float: right;
 }
-#main {
+#wrapper {
     max-width: 600px;
     margin: auto;
 }

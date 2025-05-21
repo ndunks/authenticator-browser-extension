@@ -1,3 +1,4 @@
+import { OtpData, OtpType } from "../interfaces";
 import { base32_encode } from "../libs/base32";
 import { Hotp, Totp } from "../libs/js-otp";
 
@@ -33,68 +34,24 @@ function clickCopyCode() {
         });
     })
 }
-/**
- * @param {Uint8Array} raw 
- */
-function decodeOTPMigration(raw) {
-    
-    let offset = 0;
+export function showItems(accounts: OtpData[]) {
     const hotp = new Hotp();
     const totp = {
         6: new Totp(30, 6),
         8: new Totp(30, 8),
     }
-
-    while (offset < raw.length) {
-        if (raw[offset] !== 10) {
-            if (offset < raw.length - 2)
-                console.warn('Invalid structure at', offset, 'of', raw.length)
-            break;
-        }
-        const itemLength = raw[offset + 1];
-        const secretStart = offset + 4;
-        const secretEnd = secretStart + raw[offset + 3];
-        const secret = base32_encode(raw.slice(secretStart, secretEnd));
-
-        const accountStart = secretEnd + 2;
-        const accountEnd = accountStart + raw[secretEnd + 1];
-        const account = new TextDecoder().decode(
-            raw.slice(accountStart, accountEnd)
-        ).toString();
-
-        const issuerStart = accountEnd + 2;
-        const issuerEnd = issuerStart + raw[accountEnd + 1];
-        const issuer = new TextDecoder().decode(
-            raw.slice(issuerStart, issuerEnd)
-        ).toString();
-
-        const algorithm = ["SHA1", "SHA1", "SHA256", "SHA512", "MD5"][
-            raw[issuerEnd + 1]
-        ];
-        const digits = [6, 6, 8][raw[issuerEnd + 3]] || 6;
-        const type = ["totp", "hotp", "totp"][
-            raw[issuerEnd + 5]
-        ];
+    for (const account of accounts) {
         let code;
         let counter = null;
-        if (type === "hotp") {
-            counter = 1;
-            if (issuerEnd + 7 <= itemLength) {
-                counter = raw[issuerEnd + 7];
-            }
-            code = hotp.getOtp(secret, counter);
+        if (account.type === OtpType.HOTP) {
+            code = hotp.getOtp(account.secret, account.counter);
         } else {
-            if (totp[digits])
-                code = totp[digits].getOtp(secret);
-            else console.warn('Unsupported digits', digits);
+            if (account.digits in totp)
+                code = totp[account.digits].getOtp(account.secret);
+            else console.warn('Unsupported digits', account.digits);
         }
-        console.log(issuer, account, code);
-        addItem(issuer, account, code);
-        offset += itemLength + 2;
-    };
-    clickCopyCode();
-}
-
-export function showItems(data: Uint8Array) {
-    decodeOTPMigration(data)
+        // console.log(issuer, account, code);
+        addItem(account.issuer, account.name, code);
+    }
+    clickCopyCode()
 }

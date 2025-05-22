@@ -1,27 +1,43 @@
 import { OtpData, OtpType } from "./interfaces";
 import { Hotp, Totp } from "./libs/js-otp";
+import itemTemplate from "./item.html?raw";
 
 declare var items: HTMLDivElement
+const errHtml = '<div class="code" title="ERRTITLE" style="color:red">#ERROR</div>'
 
-const itemTemplate = `<div class="item">
-<div class="issuer">ISSUER</div>
-<textarea class="code" rows="1">CODE</textarea>
-</div>`;
+function showItem(account: OtpData, code: string | Error) {
+    let title = account.issuer || account.name
+    let parsed = itemTemplate.replace(/\{TITLE\}/g, title)
+        .replace(/\{ID\}/g, account.id)
+        .replace(/\{NAME\}/g, account.name)
+    if (typeof code == 'string') {
+        parsed = parsed.replace(/\{CODE\}/g, code)
+    } else {
+        parsed = parsed.replace(/<textarea class="code".*?<\/textarea>/,
+            errHtml.replace('ERRTITLE', code.message || 'Unknown error, check console.')
+        )
+    }
+    items.innerHTML += parsed
 
-function addItem(issuer, account, code) {
-    if (!issuer || issuer.length < 2)
-        issuer = account;
-    items.innerHTML += itemTemplate.replace('ISSUER', issuer).replace('CODE', code);
 }
 
 function clickCopyCode() {
     document.querySelectorAll('.item').forEach(el => {
         el.addEventListener('click', function (event) {
+            const btn = (event.target as HTMLElement).closest('button') as HTMLButtonElement
+            if (btn) {
+                dialogManager.show('edit-item', { id: btn.closest('div').id })
+                return;
+            }
             // Select the email link anchor text
             /** @type {HTMLTextAreaElement} */
-            var codeEl = this.querySelector('.code');
+            const codeEl = this.querySelector('.code') as HTMLTextAreaElement;
+
+            if (!codeEl) return
+
             codeEl.focus();
             codeEl.select();
+
             try {
                 var successful = document.execCommand('copy');
                 var msg = successful ? 'successful' : 'unsuccessful';
@@ -36,7 +52,9 @@ function clickCopyCode() {
 export async function showItems(password?: string, silent?: boolean) {
     const accounts = await appStorage.getData(password).catch(e => {
         console.error(e)
-        silent || alert('Invalid password')
+        if (e.name == 'OperationError') {
+            silent || alert('Invalid password')
+        }
         return Promise.reject(e)
     })
 
@@ -48,16 +66,26 @@ export async function showItems(password?: string, silent?: boolean) {
         8: new Totp(30, 8),
     }
     for (const account of accounts) {
-        let code;
-        let counter = null;
-        if (account.type === OtpType.HOTP) {
-            code = hotp.getOtp(account.secret, account.counter);
-        } else {
-            if (account.digits in totp)
-                code = totp[account.digits].getOtp(account.secret);
-            else console.warn('Unsupported digits', account.digits);
+        if (!account) {
+            console.warn('Found null account', accounts)
+            continue
         }
-        addItem(account.issuer, account.name, code);
+        let code;
+        try {
+            if (account.type === OtpType.HOTP) {
+                code = hotp.getOtp(account.secret, account.counter);
+            } else {
+                if (account.digits in totp)
+                    code = totp[account.digits].getOtp(account.secret);
+                else console.warn('Unsupported digits', account.digits);
+            }
+        } catch (error) {
+            console.log(account)
+            console.error(error)
+            code = error
+        }
+
+        showItem(account, code);
     }
     clickCopyCode()
 }

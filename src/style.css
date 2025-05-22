@@ -22,10 +22,10 @@ div#items {
 
 .item {
     background-color: white;
-    padding: 5px;
+    padding: 5px 0px;
     /* font-size: 16px; */
     display: flex;
-    justify-content: space-between;
+    /* justify-content: ; */
     vertical-align: middle;
     align-items: center;
     border: solid 1px #ccc;
@@ -34,11 +34,16 @@ div#items {
 
 .issuer {
     color: #424242;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-grow: 1;
+    font-size: 18px;
+    padding-left: .5rem;
 }
 
 .code {
     font-size: 19px;
-    padding: 0px;
+    padding: 0px 5px 0px 0px;
     font-family: monospace;
     user-select: text;
     text-align: right;
@@ -47,6 +52,9 @@ div#items {
     overflow: hidden;
     border: none;
     resize: none;
+    display: inline-block;
+    flex-grow: 0;
+    flex-shrink: 0;
     /* height: 35px; */
     /* line-height: 39px; */
 }
@@ -71,13 +79,14 @@ div#items {
 }
 
 .dialog-box {
-    margin: 2rem auto;
+    margin: 1rem;
     border-radius: 12px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-height: 100%;
+    max-height: 90%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .dialog-body {
@@ -127,7 +136,8 @@ div#items {
 }
 
 /* Input styling */
-.form-card input, .form-card select {
+.form-card input,
+.form-card select {
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.25rem;
@@ -138,13 +148,15 @@ div#items {
     transition: border-color 0.2s;
 }
 
-.form-card input:focus, .form-card select:focus {
+.form-card input:focus,
+.form-card select:focus {
     border-color: #3b82f6;
     outline: none;
 }
 
 /* Button styling */
-.form-card button[type="submit"], .btn {
+.form-card button[type="submit"],
+.btn {
     padding: 0.5rem 1rem;
     background-color: #3b82f6;
     color: white;
@@ -155,6 +167,34 @@ div#items {
     transition: background-color 0.2s;
 }
 
-.form-card button[type="submit"]:hover, .btn:hover {
+.form-card button[type="submit"]:hover,
+.btn:hover {
     background-color: #2563eb;
+}
+
+/* EDIT BUTTON */
+.edit-btn {
+    display: inline-flex;
+    align-items: center;
+    /* gap: 0.5rem; */
+    padding: 0.25rem 0.5rem;
+    background-color: transparent;
+    /* background-color: red; */
+    color: rgb(238, 159, 0);
+    border: none;
+    /* border-radius: 6px; */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-right: solid 1px #ccc;
+}
+
+.edit-btn:hover {
+    background-color: #ccc;
+}
+
+.edit-btn .icon {
+    width: 1em;
+    height: 1em;
+    stroke: currentColor;
 }

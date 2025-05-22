@@ -2,6 +2,7 @@ body {
     margin: 15px;
     background-color: #f3f3f3;
     font-family: sans-serif;
+    /* font-size: small; */
 }
 
 #wrapper {
@@ -21,13 +22,13 @@ div#items {
 
 .item {
     background-color: white;
-    padding: 10px;
-    font-size: 16px;
+    padding: 5px;
+    /* font-size: 16px; */
     display: flex;
     justify-content: space-between;
     vertical-align: middle;
     align-items: center;
-    border: solid 1px #767676;
+    border: solid 1px #ccc;
     cursor: pointer;
 }
 
@@ -36,27 +37,23 @@ div#items {
 }
 
 .code {
-    font-size: 24px;
+    font-size: 19px;
     padding: 0px;
     font-family: monospace;
     user-select: text;
     text-align: right;
     display: block;
-    width: 103px;
+    width: 80px;
     overflow: hidden;
     border: none;
     resize: none;
-    height: 35px;
-    line-height: 39px;
+    /* height: 35px; */
+    /* line-height: 39px; */
 }
 
 
 #data {
     width: 100%;
-}
-
-#btnSetting {
-    float: right;
 }
 
 /* DIALOG */
@@ -74,28 +71,90 @@ div#items {
 }
 
 .dialog-box {
-    background: white;
-    padding: 1.5rem;
-    margin: 1.5rem;
-    padding-top: 1rem;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0px 0px 14px 0px;
+    margin: 2rem auto;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-body {
+    /* margin-bottom: 1rem; */
+    padding: 1rem 1rem 1rem 1rem;
+    overflow-y: auto;
+}
+
+#dialog-close {
+    background-color: transparent;
+    border: none;
+    color: rgb(56, 56, 56);
+    text-transform: capitalize;
 }
 
 .dialog-header {
     font-size: 1.25rem;
     font-weight: bold;
-    margin-bottom: 1rem;
+    padding: 1rem;
     display: flex;
     align-content: space-between;
     flex-wrap: nowrap;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    border-bottom: solid 1px #ccc;
 }
 
-.dialog-body {
-    margin-bottom: 1rem;
+/* FORM */
+
+/* Optional wrapper if you use class="form-card" */
+/* .form-card {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    
+} */
+
+/* Labels stack inputs vertically */
+.form-card label {
+    display: block;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Input styling */
+.form-card input, .form-card select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.form-card input:focus, .form-card select:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+/* Button styling */
+.form-card button[type="submit"], .btn {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.form-card button[type="submit"]:hover, .btn:hover {
+    background-color: #2563eb;
 }

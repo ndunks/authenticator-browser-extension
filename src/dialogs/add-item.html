@@ -1,0 +1,48 @@
+<form id="add-item" class="form-card" onsubmit="return false">
+  <label>
+    Name: <input type="text" name="name" required>
+  </label><br>
+
+  <label>
+    Issuer: <input type="text" name="issuer" required>
+  </label><br>
+
+  <label>
+    Secret (base32): <input type="text" name="secret" required>
+  </label><br>
+
+  <label>
+    Algorithm:
+    <select name="algorithm">
+      <option value="1" selected>SHA1</option>
+      <option value="2">SHA256</option>
+      <option value="3">SHA512</option>
+      <option value="4">MD5</option>
+    </select>
+  </label><br>
+
+  <label>
+    Type:
+    <select name="type">
+      <option value="1">HOTP</option>
+      <option value="2" selected>TOTP</option>
+    </select>
+  </label><br>
+
+  <label>
+    Digits:
+    <select name="digits">
+      <option value="6" selected>6</option>
+      <option value="8">8</option>
+    </select>
+  </label><br>
+
+  <label>
+    Counter (only for HOTP): <input type="number" name="counter">
+  </label><br>
+  <hr/>
+  <label>
+    Password (if set): <input autofocus type="password" name="password">
+  </label><br>
+  <button type="submit">Submit</button>
+</form>

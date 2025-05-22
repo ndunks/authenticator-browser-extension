@@ -22,6 +22,10 @@ export class AppStorage {
         return this.setData(accounts, password)
     }
 
+    changePassword(oldPassword: string, newPassword: string) {
+        return this.getData(oldPassword).then(data => this.setData(data, newPassword))
+    }
+
     setData(raw: OtpData[], password?: string) {
         return aesGcmEncrypt(JSON.stringify(raw), password).then(
             encrypted => {

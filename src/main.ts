@@ -33,7 +33,15 @@ function clickCopyCode() {
         });
     })
 }
-export function showItems(accounts: OtpData[]) {
+export async function showItems(password?: string, silent?: boolean) {
+    const accounts = await appStorage.getData(password).catch(e => {
+        console.error(e)
+        silent || alert('Invalid password')
+        return Promise.reject(e)
+    })
+
+    if (!accounts) return
+
     const hotp = new Hotp();
     const totp = {
         6: new Totp(30, 6),

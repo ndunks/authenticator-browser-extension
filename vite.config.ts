@@ -9,9 +9,10 @@ export default defineConfig({
   root: "src",
   build: {
     outDir: "..",
-  //   rollupOptions: {
-  //     input: "./src/index.html"
-  //   }
+    emptyOutDir: false
+    //   rollupOptions: {
+    //     input: "./src/index.html"
+    //   }
   },
   // server: {
   //   open: "./src/index.html"

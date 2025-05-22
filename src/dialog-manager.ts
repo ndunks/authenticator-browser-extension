@@ -15,8 +15,6 @@ for (const path in modules) {
     DIALOGS[filename] = { class: mod }
 }
 
-console.log(DIALOGS)
-
 // dialog.ts
 export class DialogManager {
     private overlay: HTMLElement;
@@ -40,6 +38,17 @@ export class DialogManager {
             if (e.target === this.overlay) {
                 this.hide();
             }
+        })
+    }
+
+    dataEvents() {
+        document.querySelectorAll('[data-dialog]').forEach((el: HTMLElement) => {
+            if (el.classList.contains('dialog-activator'))
+                return
+            el.addEventListener('click', e => {
+                this.show(el.dataset.dialog)
+            })
+            el.classList.add('dialog-activator')
         })
     }
 
@@ -72,8 +81,6 @@ export class DialogManager {
     }
 
     hide() {
-
         this.overlay.style.display = 'none';
-
     }
 }

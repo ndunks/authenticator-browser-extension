@@ -1,6 +1,7 @@
 {
   "scripts": {
     "dev": "vite",
+    "prebuild": "rm -rf assets",
     "build": "vite build"
   },
   "name": "authenticator-browser-extension",

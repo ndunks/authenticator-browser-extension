@@ -1,6 +1,6 @@
 import type { DialogManager } from "../dialog-manager";
 import type { Dialog } from "../interfaces";
-import { decodeGoogleAuthenticatorProto } from "../parser";
+import { decodeGoogleAuthenticatorProto, parseFromGoogleAuthenticator } from "../parser";
 import { strToBytes } from "../utils";
 import settingHtml from "./import.html?raw"
 
@@ -14,7 +14,10 @@ export default class ImportDialog implements Dialog {
         const data = manager.body.querySelector('#data') as HTMLTextAreaElement
 
         btnSave.addEventListener('click', async () => {
-            const accounts = decodeGoogleAuthenticatorProto(strToBytes(data.value))
+            const accounts = data.value.startsWith('otpauth-migration') ?
+                parseFromGoogleAuthenticator(data.value) :
+                decodeGoogleAuthenticatorProto(strToBytes(data.value));
+
             await appStorage.addItems(accounts, setPassword.value)
                 .then(() => location.reload())
         })
